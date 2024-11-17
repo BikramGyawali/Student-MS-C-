@@ -20,6 +20,7 @@ void seeDetail(){
 	FILE *fp;
 	fp=fopen("student.txt","r");
 	struct student s1;;
+
 	while(fread(&s1,sizeof(struct student),1,fp)==1){
 	
 	space(); printf("Rool-No : %d",s1.id);
@@ -51,7 +52,7 @@ void search() {
     }
 
     if (strcmp(opt, "id") == 0 || strcmp(opt, "Id") == 0) {
-        space(); printf("Enter the Id: ");
+        space(); printf("Enter the Rool-No: ");
         scanf("%d", &sid);
 
         while (fread(&s1, sizeof(struct student), 1, fp) == 1) {
@@ -67,7 +68,7 @@ void search() {
             }
         }
         if (!rfound) {
-            space(); printf("No record found for Id: %d", sid);
+            space(); printf("No record found for Rool-No %d", sid);
             space();
         }
     } else if (strcmp(opt, "name") == 0 || strcmp(opt, "Name") == 0) {
@@ -91,56 +92,23 @@ void search() {
             space();
         }
     } else {
-        space(); printf("Invalid search option! Please choose 'id' or 'name'.");
+        space(); printf("Invalid search option! Please choose 'Rool-No' or 'Name'.");
         space();
     }
 
     fclose(fp);
 }
 
-//Stating Main Section
-main(){
+
+//Starting Delete funciton 
+
+void delete(){ 
 	FILE *fp;
 	 FILE *nfp;
  	int did,found=0;
  	char dname[50],opt[50];
- 	struct student s1;
-	int choice ;
-			//Task To be Perform
-space();	printf(" Welcome to Sarswati Multiple Campus\n\n ");
-do{
-	loop1:
- space1();printf("----------------------------------------------------------------------------------------");
-space();	printf("1.Add");
-space();	printf("2. See All Student Details ");
-space();	printf("3. Search Students");
-space(); printf("4. Delete  ");
-
-space();	printf("5.Exist");
-	
-		//For Geeting the choise Form User
-		
-space();	printf("Enter the Number to perform Task:\t");
-	scanf("%d",&choice);
-	
-	
-	switch(choice){
-		
-		//Starting the Cases to call the function
-		case 1:
-		Added_Data();
-			break;
-			case 2 :
-		seeDetail();
-			break;
-			case 3 :
-				search();
-			break;
-			case 4:
-
-// Starting Delete Function
- 
-  fp = fopen("student.txt", "r");
+ 	struct student s1;	
+	fp = fopen("student.txt", "r");
     if (fp == NULL) {
         space(); printf("Error opening file 'student.txt'!");
         return;
@@ -190,7 +158,7 @@ space();	printf("Enter the Number to perform Task:\t");
     } 
     // Invalid option
     else {
-        space(); printf("Invalid search option! Please choose 'id' or 'name'.");
+        space(); printf("Invalid search option! Please choose 'Rool-No' or 'Name'.");
         fclose(fp);
         fclose(nfp);
         remove("newFile.txt");
@@ -203,25 +171,110 @@ space();	printf("Enter the Number to perform Task:\t");
     rename("newFile.txt", "student.txt");
     
     space();
-    goto loop1;
-    
-//				printf("\n\nMay this help you to keep records properly");
+}
+//starting update function
+
+void update(){
+	FILE *fp;
+	struct student s1;
+	int dataFound=0,uid,recordNo=0;
+	long realPostion;
+	fp=fopen("student.txt","r+");
+	if(fp==NULL){
+	space();	printf("You havenot any file in this name");
+     return;
+	}
+	 space(); printf("Enter the Rool-No of the student that you want to update : ");
+	scanf("%d",&uid);
+	while(fread(&s1,sizeof(struct student),1,fp)==1){
+	
+	if(uid==s1.id){
+	dataFound=1;
+space();	printf("The old data :");
+	  space(); printf("Roll-No : %d", s1.id);
+                space(); printf("Name : %s %s", s1.fname, s1.lname);
+                space(); printf("Faculty : %s", s1.f);
+                space(); printf("Semester : %d", s1.sem);
+                space(); printf("Address : %s", s1.a);
+                space(); printf("Phone Number : %d", s1.p);
+                space();printf("------------------------------------------------------------------------");
+			space();	printf("Now Entering the New data ........ ");
+			space();	printf("Enter the semester :");
+				scanf("%d",&s1.sem);
+				realPostion=ftell(fp)-sizeof(struct student);
+				fseek(fp,realPostion,SEEK_SET);
+				
+				 if (fwrite(&s1, sizeof(struct student), 1, fp) == 1) {
+             space();   printf("Data updated successfully!");
+            } else {
+                printf("Error updating data.");
+            }
+			break;	
+	}
+
+	}
+	if(dataFound==0){
+	space();	printf("Student of Id %d not found",uid);
+		
+	}
+fclose(fp);
+}
+//Stating Main Section
+main(){
+	int choice;
+	
+			//Task To be Perform
+space();	printf(" Welcome to Sarswati Multiple Campus\n\n ");
+do{
+	loop1:
+ space1();printf("----------------------------------------------------------------------------------------");
+space();	printf("1.Add Students");
+space();	printf("2. See All Students Details ");
+space();	printf("3. Search Students");
+space(); printf("4. Update Detail  ");
+space();	printf("5.Delete Record");
+space();	printf("6.Exist");
+	
+		//For Geeting the choise Form User
+		
+space();printf("Enter the Number to perform Task:\t");
+	scanf("%d",&choice);
+	
+	
+	switch(choice){
+		
+		//Starting the Cases to call the function
+		case 1:
+		Added_Data();
 			break;
-			case 5: 
+			case 2 :
+		seeDetail();
+			break;
+			case 3 :
+				search();
+			break;
+				case 4:
+			 update();
+			break;
+			case 5:
+                   delete();
+ 			break;
+			case 6: 
 		space();	printf("Exiting...................................");
-		 space();printf("May this system hepl you .......");
+		  space();space();printf("May this system hepl you .......");
 		 space();space();
 		break;
 			
 			default :
-				printf("Enter the valid Number");
+			space();	printf("Enter the valid Number");
 				break;
 				
 	} 
-}while(choice!=5);
+}while(choice!=6);
 	
 	
 } 
+
 	//Function Call for adding data
  void Added_Data(){
  	FILE *fp;
